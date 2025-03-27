@@ -31,4 +31,5 @@ pip install -r requirements.txt
 - install python 3.10
 
 https://coral.ai/docs/edgetpu/compiler/
+
 https://coral.ai/docs/accelerator/get-started/#install-the-edge-tpu-runtime
