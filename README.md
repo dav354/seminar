@@ -18,6 +18,16 @@
 - pepper kameras nutzen
 - pepper und pi via wifi verbinden
 
+## Todo
+
+![image](assets/1.png)
+
+- [x] gesture recognition
+- [ ] other/custom model for rock, paper, scissors
+- [ ] game logic
+- [ ] video stream
+- [ ] tflight models
+
 
 ## Venv
 

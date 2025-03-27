@@ -60,7 +60,7 @@ def main():
             print("❌ Can't receive frame. Exiting ...")
             break
 
-        frame = cv2.flip(frame, 1)  # 👈 Mirror the frame horizontally
+        frame = cv2.flip(frame, 1)
 
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
