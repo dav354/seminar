@@ -1,18 +1,12 @@
-from tflite_runtime.interpreter import Interpreter, load_delegate
+from mediapipe.tasks.python import BaseOptions
+from mediapipe.tasks.python.vision import GestureRecognizer, GestureRecognizerOptions, VisionRunningMode
 
-# Set to "CPU" or "TPU"
-HARDWARE = "CPU"
+MODEL_PATH = "../model_training/exported_model/gesture_recognizer.task"
 
-MODEL_PATHS = {
-    "CPU": "models/MediaPipeHandDetector.tflite",
-    "TPU": "models/model.tflite",
-}
-
-def load_interpreter():
-    model_path = MODEL_PATHS[HARDWARE]
-    if HARDWARE == "TPU":
-        return Interpreter(
-            model_path=model_path,
-            experimental_delegates=[load_delegate("libedgetpu.so.1")]
-        )
-    return Interpreter(model_path=model_path)
+def load_recognizer(model_path=MODEL_PATH):
+    options = GestureRecognizerOptions(
+        base_options=BaseOptions(model_asset_path=model_path),
+        running_mode=VisionRunningMode.LIVE_STREAM,
+        num_hands=1
+    )
+    return GestureRecognizer.create_from_options(options)

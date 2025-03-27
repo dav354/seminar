@@ -5,11 +5,3 @@ mediapipe==0.10.8
 tflite-runtime==2.13.0
 pandas==2.1.1
 pycoral==0.2.0
-
-# === For Custom Training ===
-tensorflow==2.13.0
-tensorflow-hub==0.15.0
-tensorflow-datasets==4.9.2
-
-# === Visualization / Debugging ===
-matplotlib==3.8.0
