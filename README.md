@@ -33,7 +33,9 @@
 ```shell
 python3.10 -m venv .venv
 source .venv/bin/activate
+pip install --upgrade pip
 pip install -r requirements.txt
+pip install git+https://github.com/google/mediapipe@master#subdirectory=mediapipe_model_maker
 ```
 
 ## Prerequisites
@@ -52,3 +54,9 @@ sudo apt update
 sudo apt install edgetpu-compiler
 ```
 
+## Make own Model
+
+```shell
+unzip assets/rps_data_sample.zip 
+python3 train_model.py
+```

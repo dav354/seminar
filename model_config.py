@@ -4,7 +4,7 @@ from tflite_runtime.interpreter import Interpreter, load_delegate
 HARDWARE = "CPU"
 
 MODEL_PATHS = {
-    "CPU": "models/gesture_recognizer.tflite",
+    "CPU": "models/MediaPipeHandDetector.tflite",
     "TPU": "models/model.tflite",
 }
 
