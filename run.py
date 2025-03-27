@@ -60,6 +60,8 @@ def main():
             print("❌ Can't receive frame. Exiting ...")
             break
 
+        frame = cv2.flip(frame, 1)  # 👈 Mirror the frame horizontally
+
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
         timestamp_ms = int(cap.get(cv2.CAP_PROP_POS_MSEC))
@@ -84,6 +86,7 @@ def main():
         cv2.imshow("Gesture Recognition", frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+
 
     cap.release()
     cv2.destroyAllWindows()
