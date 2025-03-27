@@ -28,7 +28,6 @@
 - [ ] video stream
 - [ ] tflight models
 
-
 ## Venv
 
 ```shell
@@ -43,3 +42,13 @@ pip install -r requirements.txt
 https://coral.ai/docs/edgetpu/compiler/
 
 https://coral.ai/docs/accelerator/get-started/#install-the-edge-tpu-runtime
+
+## Install edge tpu repo
+
+```shell
+echo "deb https://packages.cloud.google.com/apt coral-edgetpu-stable main" | sudo tee /etc/apt/sources.list.d/coral-edgetpu.list
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+sudo apt update
+sudo apt install edgetpu-compiler
+```
+
