@@ -1,15 +1,11 @@
 ---
 - name: Raspberry Pi - Setup with Docker & Coral TPU
   hosts: all
-  become: true
 
   vars:
     ansible_python_interpreter: /usr/bin/python3.12
-
-    # SSH keys
     ssh_keys:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGkbHB39syuJKdvBlvO7qrrTvRCxR6fXTlaCh20QRLaq
-
     # geerlingguy.docker role vars
     docker_users:
       - "{{ ansible_user_id }}"
@@ -23,6 +19,7 @@
         update_cache: true
         upgrade: full
         cache_valid_time: 3600
+      become: true
 
     - name: Install base utilities
       ansible.builtin.apt:
@@ -37,62 +34,33 @@
           - htop
         state: present
         autoremove: yes
+      become: true
 
   roles:
     - role: geerlingguy.docker
+      become: true
 
   tasks:
-    - name: Install python3.10
+    - name: Install python3.9
+      become: true
       block:
-        - name: Add deadsnakes PPA for Python 3.10
+        - name: Add deadsnakes PPA for Python 3.9
           ansible.builtin.apt_repository:
             repo: ppa:deadsnakes/ppa
             state: present
 
-        - name: Install Python 3.10 & pip
+        - name: Install Python 3.9 & pip
           ansible.builtin.apt:
             name:
-              - python3.10
-              - python3.10-venv
-              - python3.10-dev
+              - python3.9
+              - python3.9-venv
+              - python3.9-dev
               - python3-pip
             state: present
 
-        - name: Set python3 alternative to Python 3.10
-          community.general.alternatives:
-            name: python3
-            link: /usr/bin/python3
-            path: /usr/bin/python3.10
-            priority: 100
-        
-    - name: Install Coral Edge TPU support
-      block:
-        - name: Download Coral Edge TPU GPG keyring
-          ansible.builtin.get_url:
-            url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-            dest: /usr/share/keyrings/coral-edgetpu-archive-keyring.gpg
-            mode: '0644'
-
-        - name: Add Coral Edge TPU apt repository
-          ansible.builtin.apt_repository:
-            filename: coral-edgetpu
-            repo: >-
-              deb [signed-by=/usr/share/keyrings/coral-edgetpu-archive-keyring.gpg]
-              https://packages.cloud.google.com/apt coral-edgetpu-stable main
-            state: present
-
-        - name: Update apt cache
-          ansible.builtin.apt:
-            update_cache: true
-
-        - name: Install PyCoral from the Debian repo
-          ansible.builtin.apt:
-            name: python3-pycoral
-            state: present
-  
     - name: Add SSH public keys
       ansible.builtin.authorized_key:
-        user: "{{ ansible_user_id }}"
+        user: "{{ ansible_user }}"
         state: present
         key: "{{ item }}"
       loop: "{{ ssh_keys }}"
