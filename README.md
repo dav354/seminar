@@ -9,7 +9,7 @@
     width="400" />
 </p>
 
-# Schnick Scnack Schnuck Pepper
+# Schnick Schnack Schnuck Pepper
 
 ## Schitt 0
 - thema definieren
@@ -69,7 +69,7 @@ sudo apt install edgetpu-compiler
 To setup the pi there is a small ansbile script. To run it you need to install ansible.
 
 > [!NOTE]
-> This step assumes you installed the raspberry pi os before.
+> This step assumes you installed ubuntu on the pi before.
 
 1. First install the required galaxy roles:
   
