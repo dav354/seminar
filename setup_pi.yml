@@ -4,6 +4,8 @@
   become: true
 
   vars:
+    ansible_python_interpreter: /usr/bin/python3
+
     # Coral repo
     coral_repo: "deb https://packages.cloud.google.com/apt coral-edgetpu-stable main"
     coral_gpg_key_url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
@@ -16,7 +18,7 @@
     docker_users:
       - "{{ ansible_user_id }}"
     docker_package_state: latest
-    docker_edition: community
+    docker_edition: ce
     docker_compose_plugin: true
 
   pre_tasks:
@@ -69,10 +71,10 @@
           - python3-pip
         state: present
 
-    - name: Install PyCoral Python bindings
-      ansible.builtin.pip:
-        name: pycoral
-        executable: pip3
+    - name: Install PyCoral from the Debian repo
+      ansible.builtin.apt:
+        name: python3-pycoral
+        state: present
 
     - name: Add SSH public keys
       ansible.builtin.authorized_key:
