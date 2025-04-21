@@ -18,6 +18,7 @@
       buildInputs = [
         pkgs.ansible
         pkgs.ansible-lint
+        pkgs.sshpass
       ];
     };
   };

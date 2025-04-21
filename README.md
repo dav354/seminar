@@ -64,3 +64,21 @@ sudo apt update
 sudo apt install edgetpu-compiler
 ```
 
+## Pi installation with ansible
+
+To setup the pi there is a small ansbile script. To run it you need to install ansible.
+
+> [!NOTE]
+> This step assumes you installed the raspberry pi os before.
+
+1. First install the required galaxy roles:
+  
+  ```shell
+  ansible-galaxy install geerlingguy.docker
+  ```
+
+2. Now you can execute the the playbooK:
+
+  ```shell
+  ansible-playbook -i '192.168.0.29,' -u david setup_pi.yml -Kk
+  ```
