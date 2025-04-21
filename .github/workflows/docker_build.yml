@@ -13,10 +13,8 @@ jobs:
       - name: 🛎️ Checkout source
         uses: actions/checkout@v4
 
-      - name: ⚙️ Set up QEMU (for cross‑building)
+      - name: ⚙️ Set up QEMU (for cross-building)
         uses: docker/setup-qemu-action@v2
-        with:
-          cache-image: true 
 
       - name: 🚀 Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -38,5 +36,9 @@ jobs:
           platforms: linux/arm64
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/seminar:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: |
+            type=gha
+            type=gha,scope=pipcache
+          cache-to: |
+            type=gha,mode=max
+            type=gha,scope=pipcache,mode=max
