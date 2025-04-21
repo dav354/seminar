@@ -43,7 +43,7 @@ COPY --from=builder /install /usr/local
 # Copy app and model
 WORKDIR /app
 COPY app.py camera.py draw.py ./
-COPY models/model_edgetpu.tflite ./model_edgetpu.tflite
+COPY models/model_edgetpu.tflite ./models/model_edgetpu.tflite
 
 EXPOSE 80
 
