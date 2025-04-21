@@ -3,7 +3,8 @@
     <img src="https://github.com/dav354/seminar/actions/workflows/docker_build.yml/badge.svg?branch=main"
          alt="Build Status" />
   </a>
-<br/>
+  <br/>
+  <br/>
   <img src="assets/logo_white.png"  
     alt="Logo"
     width="400" />
@@ -69,7 +70,7 @@ sudo apt install edgetpu-compiler
 To setup the pi there is a small ansbile script. To run it you need to install ansible.
 
 > [!NOTE]
-> This step assumes you installed [raspberry pi os](https://downloads.raspberrypi.com/raspios_oldstable_lite_arm64/images/raspios_oldstable_lite_arm64-2024-10-28/2024-10-22-raspios-bullseye-arm64-lite.img.xz)
+> This step assumes you installed ubuntu24.04
 
 1. First install the required galaxy roles:
   
@@ -80,5 +81,43 @@ To setup the pi there is a small ansbile script. To run it you need to install a
 2. Now you can execute the the playbooK:
 
   ```shell
-  ansible-playbook -i '192.168.0.184,' -u david setup_pi.yml -k
+  ansible-playbook -i '192.168.0.187,' -u david setup_pi.yml -Kk --diff
   ```
+
+## Docker context
+
+to use docker on the pi create a new docker context
+
+```shell
+docker context create pi \
+  --docker "host=ssh://david@192.168.0.187"
+```
+
+then to use it
+
+```shell
+# See all your contexts
+docker context ls
+
+# Switch to the Pi
+docker context use pi
+```
+
+to switch back
+
+```shell
+docker context use default
+```
+
+## Manual Build
+
+to build the docker image locally run:
+
+```shell
+docker buildx build \
+  --builder multiarch-builder \
+  --platform linux/arm64 \
+  --load \
+  -t gesture-pi:latest \
+  .
+```
