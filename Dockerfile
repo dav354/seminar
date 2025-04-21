@@ -6,7 +6,9 @@ RUN apt-get update && \
       build-essential \
       libatlas-base-dev \
       libprotobuf-dev \
-      protobuf-compiler && \
+      protobuf-compiler \
+      gdal-bin \
+      libgdal-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
