@@ -7,15 +7,24 @@ from flask import Flask, Response
 from camera import setup_camera
 from draw import draw_landmarks
 from tflite_runtime.interpreter import Interpreter, load_delegate
+import sys
+
+print("[🚀] Booting Flask app...")
 
 # === Load Edge TPU Model ===
-interpreter = Interpreter(
-    model_path="models/model_edgetpu.tflite",
-    experimental_delegates=[load_delegate("libedgetpu.so.1")]
-)
-interpreter.allocate_tensors()
-input_details = interpreter.get_input_details()
-output_details = interpreter.get_output_details()
+try:
+    print("[📦] Loading Edge TPU model from models/model_edgetpu.tflite...")
+    interpreter = Interpreter(
+        model_path="models/model_edgetpu.tflite",
+        experimental_delegates=[load_delegate("libedgetpu.so.1")]
+    )
+    interpreter.allocate_tensors()
+    input_details = interpreter.get_input_details()
+    output_details = interpreter.get_output_details()
+    print("[✅] Edge TPU model loaded.")
+except Exception as e:
+    print(f"[❌] Failed to load model or Edge TPU delegate: {e}")
+    sys.exit(1)
 
 # Labels must match training order
 label_map = ['none', 'rock', 'paper', 'scissors']
@@ -25,7 +34,10 @@ cap = setup_camera()
 mp_hands = mp.solutions.hands.Hands(static_image_mode=False, max_num_hands=1)
 
 if not cap.isOpened():
-    raise RuntimeError("❌ Failed to open camera.")
+    print("❌ Failed to open camera.")
+    sys.exit(1)
+else:
+    print("🎥 Camera opened successfully.")
 
 def generate_frames():
     prev_time = time.time()
@@ -33,6 +45,7 @@ def generate_frames():
     while True:
         ret, frame = cap.read()
         if not ret:
+            print("[⚠️] Frame capture failed.")
             continue
 
         frame = cv2.flip(frame, 1)
@@ -41,6 +54,7 @@ def generate_frames():
 
         gesture = "none"
         if results.multi_hand_landmarks:
+            print("[🖐] Hand detected.")
             hand_landmarks = results.multi_hand_landmarks[0]
             landmarks = [[lm.x, lm.y] for lm in hand_landmarks.landmark]
 
@@ -48,14 +62,18 @@ def generate_frames():
             draw_landmarks(frame, landmarks, frame.shape[1], frame.shape[0])
 
             # Prepare model input
-            coords = np.array(landmarks).flatten().astype(np.float32)
-            interpreter.set_tensor(input_details[0]['index'], [coords])
-            interpreter.invoke()
-            output_data = interpreter.get_tensor(output_details[0]['index'])
+            try:
+                coords = np.array(landmarks).flatten().astype(np.float32)
+                interpreter.set_tensor(input_details[0]['index'], [coords])
+                interpreter.invoke()
+                output_data = interpreter.get_tensor(output_details[0]['index'])
 
-            # Get predicted gesture
-            predicted_idx = np.argmax(output_data[0])
-            gesture = label_map[predicted_idx]
+                # Get predicted gesture
+                predicted_idx = np.argmax(output_data[0])
+                gesture = label_map[predicted_idx]
+                print(f"[🤖] Prediction: {gesture}")
+            except Exception as e:
+                print(f"[❌] Inference error: {e}")
 
         # Display gesture and FPS
         current_time = time.time()
@@ -69,6 +87,7 @@ def generate_frames():
 
         success, buffer = cv2.imencode(".jpg", frame)
         if not success:
+            print("[⚠️] JPEG encoding failed.")
             continue
 
         yield (
@@ -93,4 +112,5 @@ def video_feed():
     )
 
 if __name__ == "__main__":
+    print("[🌍] Flask server starting on port 80...")
     app.run(host="0.0.0.0", port=80, threaded=True, debug=False)
