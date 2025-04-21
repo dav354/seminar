@@ -19,7 +19,8 @@ RUN apt-get update && \
 WORKDIR /app
 
 COPY requirements.txt .
-RUN pip install --upgrade pip && \
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --upgrade pip && \
     pip install --prefix=/install --no-cache-dir -r requirements.txt
 
 
