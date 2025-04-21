@@ -39,7 +39,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest
+          tags: ghcr.io/dav354/seminar:latest
           cache-from: |
             type=gha
             type=gha,scope=pipcache
