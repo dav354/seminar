@@ -1,7 +1,7 @@
 ---
 services:
   gesture-pi:
-    image: ghcr.io/dav354/gesture-pi:latest
+    image: ghcr.io/dav354/seminar:latest
     container_name: gesture-pi
     privileged: true
     ports:
