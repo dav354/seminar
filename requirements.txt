@@ -3,5 +3,5 @@ opencv-python==4.8.1.78
 numpy==1.24.3
 mediapipe==0.10.8
 tflite-runtime==2.13.0
-pycoral==0.2.0
+https://github.com/google-coral/pycoral/releases/download/v2.0.0/pycoral-2.0.0-cp39-cp39-linux_aarch64.whl
 flask
