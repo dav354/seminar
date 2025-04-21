@@ -69,7 +69,7 @@ sudo apt install edgetpu-compiler
 To setup the pi there is a small ansbile script. To run it you need to install ansible.
 
 > [!NOTE]
-> This step assumes you installed ubuntu pi os before.
+> This step assumes you installed [raspberry pi os](https://downloads.raspberrypi.com/raspios_oldstable_lite_arm64/images/raspios_oldstable_lite_arm64-2024-10-28/2024-10-22-raspios-bullseye-arm64-lite.img.xz)
 
 1. First install the required galaxy roles:
   
