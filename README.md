@@ -69,7 +69,7 @@ sudo apt install edgetpu-compiler
 To setup the pi there is a small ansbile script. To run it you need to install ansible.
 
 > [!NOTE]
-> This step assumes you installed ubuntu on the pi before.
+> This step assumes you installed ubuntu pi os before.
 
 1. First install the required galaxy roles:
   
@@ -80,5 +80,5 @@ To setup the pi there is a small ansbile script. To run it you need to install a
 2. Now you can execute the the playbooK:
 
   ```shell
-  ansible-playbook -i '192.168.0.29,' -u david setup_pi.yml -Kk
+  ansible-playbook -i '192.168.0.184,' -u david setup_pi.yml -Kk
   ```
