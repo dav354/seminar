@@ -1,4 +1,5 @@
-FROM --platform=linux/arm64 python:3.11-slim
+ARG TARGETPLATFORM
+FROM python:3.11-slim
 
 RUN --mount=type=cache,target=/var/cache/apt \
     apt-get update && \
