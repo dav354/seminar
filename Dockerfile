@@ -47,4 +47,4 @@ COPY models/model_edgetpu.tflite ./models/model_edgetpu.tflite
 
 EXPOSE 80
 
-CMD ["python", "app.py"]
+CMD ["python", "-u", "app.py"]

@@ -90,7 +90,7 @@ to use docker on the pi create a new docker context
 
 ```shell
 docker context create pi \
-  --docker "host=ssh://david@192.168.0.189"
+  --docker "host=ssh://david@192.168.0.47"
 ```
 
 then to use it
