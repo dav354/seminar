@@ -1,4 +1,15 @@
-# Schnick Schack Schnick Pepper
+<p align="center">
+ <a href="https://github.com/dav354/seminar/actions">
+    <img src="https://github.com/dav354/seminar/actions/workflows/docker_build.yml/badge.svg?branch=main"
+         alt="Build Status" />
+  </a>
+<br/>
+  <img src="assets/logo_white.png"  
+    alt="Logo"
+    width="400" />
+</p>
+
+# Schnick Scnack Schnuck Pepper
 
 ## Schitt 0
 - thema definieren
