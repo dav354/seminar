@@ -118,6 +118,6 @@ docker buildx build \
   --builder multiarch-builder \
   --platform linux/arm64 \
   --load \
-  -t gesture-pi:latest \
+  -t seminar:latest \
   .
 ```
