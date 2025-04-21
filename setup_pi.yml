@@ -1,0 +1,82 @@
+---
+- name: Raspberry Pi - Setup with Docker & Coral TPU
+  hosts: all
+  become: true
+
+  vars:
+    # Coral repo
+    coral_repo: "deb https://packages.cloud.google.com/apt coral-edgetpu-stable main"
+    coral_gpg_key_url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+    # Ssh keys
+    ssh_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGkbHB39syuJKdvBlvO7qrrTvRCxR6fXTlaCh20QRLaq
+
+    # geerlingguy.docker role vars
+    docker_users:
+      - "{{ ansible_user_id }}"
+    docker_package_state: latest
+    docker_edition: community
+    docker_compose_plugin: true
+
+  pre_tasks:
+    - name: Update apt cache & upgrade all packages
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: dist
+        cache_valid_time: 3600
+
+    - name: Install base utilities
+      ansible.builtin.apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+          - software-properties-common
+          - git
+          - htop
+        state: present
+
+  roles:
+    - role: geerlingguy.docker
+
+  tasks:
+    - name: Add Coral Edge TPU GPG key
+      ansible.builtin.apt_key:
+        url: "{{ coral_gpg_key_url }}"
+        state: present
+
+    - name: Add Coral Edge TPU apt repository
+      ansible.builtin.apt_repository:
+        repo: "{{ coral_repo }}"
+        state: present
+
+    - name: Update apt cache after adding Coral repo
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install Coral Edge TPU runtime
+      ansible.builtin.apt:
+        name: libedgetpu1-std
+        state: latest
+
+    - name: Install Python3 & pip
+      ansible.builtin.apt:
+        name:
+          - python3
+          - python3-pip
+        state: present
+
+    - name: Install PyCoral Python bindings
+      ansible.builtin.pip:
+        name: pycoral
+        executable: pip3
+
+    - name: Add SSH public keys
+      ansible.builtin.authorized_key:
+        user: "{{ ansible_user_id }}"
+        state: present
+        key: "{{ item }}"
+      loop: "{{ ssh_keys }}"
