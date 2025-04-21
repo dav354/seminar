@@ -3,6 +3,13 @@
   hosts: all
 
   vars:
+    bash_aliases:
+    - 'alias dc="docker compose"'
+    - 'alias ll="ls -lah"'
+    - 'alias ..="cd .."'
+    - 'alias dcp="dc pull"'
+    - 'alias dcr="dc down && dc up -d"'
+
     ansible_python_interpreter: /usr/bin/python3.12
     ssh_keys:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGkbHB39syuJKdvBlvO7qrrTvRCxR6fXTlaCh20QRLaq
@@ -64,3 +71,13 @@
         state: present
         key: "{{ item }}"
       loop: "{{ ssh_keys }}"
+
+    - name: Add bash aliases to .bashrc
+      ansible.builtin.lineinfile:
+        path: "/home/{{ ansible_user }}/.bashrc"
+        line: "{{ item }}"
+        create: yes
+        state: present
+        insertafter: EOF
+      loop: "{{ bash_aliases }}"
+      become: false
