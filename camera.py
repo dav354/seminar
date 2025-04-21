@@ -10,4 +10,12 @@ def setup_camera():
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, FRAME_WIDTH)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT)
     cap.set(cv2.CAP_PROP_FPS, FPS)
+
+    if not cap.isOpened():
+        raise RuntimeError("❌ Could not open camera. Check your device index or drivers.")
+
+    print("[📷] Camera ready")
+    print(f"    Resolution: {cap.get(cv2.CAP_PROP_FRAME_WIDTH)} x {cap.get(cv2.CAP_PROP_FRAME_HEIGHT)}")
+    print(f"    FPS: {cap.get(cv2.CAP_PROP_FPS)}")
+
     return cap

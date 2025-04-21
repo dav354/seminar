@@ -81,7 +81,7 @@ To setup the pi there is a small ansbile script. To run it you need to install a
 2. Now you can execute the the playbooK:
 
   ```shell
-  ansible-playbook -i '192.168.0.188,' -u david setup_pi.yml -Kk --diff
+  ansible-playbook -i '192.168.0.189,' -u david setup_pi.yml -Kk --diff
   ```
 
 ## Docker context
@@ -90,7 +90,7 @@ to use docker on the pi create a new docker context
 
 ```shell
 docker context create pi \
-  --docker "host=ssh://david@192.168.0.188"
+  --docker "host=ssh://david@192.168.0.189"
 ```
 
 then to use it

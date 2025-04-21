@@ -1,30 +1,31 @@
 #!/usr/bin/env python3
 import cv2
 import time
+import numpy as np
 import mediapipe as mp
 from flask import Flask, Response
 from camera import setup_camera
 from draw import draw_landmarks
+from tflite_runtime.interpreter import Interpreter, load_delegate
 
-from mediapipe.tasks.python import BaseOptions
-from mediapipe.tasks.python.vision import (
-    GestureRecognizer,
-    GestureRecognizerOptions,
-    VisionRunningMode,
+# === Load Edge TPU Model ===
+interpreter = Interpreter(
+    model_path="models/model_edgetpu.tflite",
+    experimental_delegates=[load_delegate("libedgetpu.so.1")]
 )
+interpreter.allocate_tensors()
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
+
+# Labels must match training order
+label_map = ['none', 'rock', 'paper', 'scissors']
 
 app = Flask(__name__)
 cap = setup_camera()
+mp_hands = mp.solutions.hands.Hands(static_image_mode=False, max_num_hands=1)
 
 if not cap.isOpened():
     raise RuntimeError("❌ Failed to open camera.")
-
-options = GestureRecognizerOptions(
-    base_options=BaseOptions(model_asset_path="models/gesture_recognizer.task"),
-    running_mode=VisionRunningMode.LIVE_STREAM,
-    num_hands=1,
-)
-recognizer = GestureRecognizer.create_from_options(options)
 
 def generate_frames():
     prev_time = time.time()
@@ -35,34 +36,36 @@ def generate_frames():
             continue
 
         frame = cv2.flip(frame, 1)
-        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
+        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        results = mp_hands.process(rgb_frame)
 
-        try:
-            result = recognizer.recognize_async(mp_image, int(time.time() * 1000))
-        except Exception:
-            result = None
+        gesture = "none"
+        if results.multi_hand_landmarks:
+            hand_landmarks = results.multi_hand_landmarks[0]
+            landmarks = [[lm.x, lm.y] for lm in hand_landmarks.landmark]
 
-        if result and result.gestures:
-            gesture = result.gestures[0][0].category_name
-            landmarks = [
-                (lm.x, lm.y) for lm in result.hand_landmarks[0]
-            ] if result.hand_landmarks else []
-
+            # Draw landmarks on frame
             draw_landmarks(frame, landmarks, frame.shape[1], frame.shape[0])
 
-            cv2.putText(
-                frame, f"Gesture: {gesture}", (10, 70),
-                cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 255), 2
-            )
+            # Prepare model input
+            coords = np.array(landmarks).flatten().astype(np.float32)
+            interpreter.set_tensor(input_details[0]['index'], [coords])
+            interpreter.invoke()
+            output_data = interpreter.get_tensor(output_details[0]['index'])
 
+            # Get predicted gesture
+            predicted_idx = np.argmax(output_data[0])
+            gesture = label_map[predicted_idx]
+
+        # Display gesture and FPS
         current_time = time.time()
         fps = 1.0 / (current_time - prev_time)
         prev_time = current_time
 
-        cv2.putText(
-            frame, f"FPS: {fps:.2f}", (10, 30),
-            cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 0), 2
-        )
+        cv2.putText(frame, f"Gesture: {gesture}", (10, 70),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 255), 2)
+        cv2.putText(frame, f"FPS: {fps:.2f}", (10, 30),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 0), 2)
 
         success, buffer = cv2.imencode(".jpg", frame)
         if not success:
