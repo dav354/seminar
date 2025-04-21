@@ -4,6 +4,8 @@ services:
     image: ghcr.io/dav354/gesture-pi:latest
     container_name: gesture-pi
     privileged: true
+    ports:
+      - 80:80
     devices:
       - "/dev/bus/usb:/dev/bus/usb"    # Coral Edge TPU
       - "/dev/video0:/dev/video0"      # USB webcam
