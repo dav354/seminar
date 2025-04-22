@@ -37,15 +37,23 @@
       padding-right: 10px !important;
     }
 
+    .container-fluid {
+      padding-left: 10px !important;
+      padding-right: 10px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
     /* Responsive video max size */
     .video-stream img {
       width: 100%;
       height: auto;
       max-height: calc(100vh - 280px);
       object-fit: cover;
+      margin-top: 15px;
     }
 
-    /* Stats and logs layout */
+    /* Stats and Logs layout */
     .bottom-row {
       display: flex;
       flex-wrap: wrap;
@@ -53,18 +61,20 @@
       gap: 10px;
     }
 
-    .stats-col {
-      flex: 1 1 220px;
-    }
-
+    .stats-col,
     .logs-col {
-      flex: 2 1 400px;
+      flex: 1 1 300px;
+      display: flex;
+      flex-direction: column;
     }
 
-    .logs-col .card-content {
-      max-height: 300px;
-      overflow-y: auto;
+    .card-content {
+      flex: 1;
+    }
+
+    #logMessages {
       font-size: 0.9em;
+      white-space: pre-line;
     }
 
     @media (max-width: 800px) {
@@ -74,25 +84,33 @@
         flex: 1 1 100%;
       }
     }
+
+    /* Dark mode toggle icon */
+    .dark-toggle {
+      cursor: pointer;
+      color: white;
+      font-size: 1.5rem;
+      line-height: 1.5rem;
+      margin-right: 1rem;
+    }
   </style>
 </head>
 
 <body class="">
 
-  <!-- Navbar  -->
+  <!-- Navbar -->
   <nav class="navbar blue">
-    <div class="nav-wrapper container">
-      <a href="#" class="brand-logo">Gesture‑Stream</a>
+    <div class="nav-wrapper container-fluid">
+      <a href="#" class="brand-logo">Gesture-Stream</a>
       <ul class="right">
         <li>
-          <!-- Darkmode Toggle Icon  -->
           <i id="darkModeToggle" class="material-icons dark-toggle">brightness_6</i>
         </li>
       </ul>
     </div>
   </nav>
 
-  <div class="container">
+  <div class="container-fluid">
     <!-- Video Stream -->
     <div class="video-stream">
       <img src="{{ url_for('video_feed') }}" alt="Live Video">
@@ -103,7 +121,7 @@
 
       <!-- Stats Column -->
       <div class="stats-col">
-        <div class="card">
+        <div class="card" style="height: 100%;">
           <div class="card-content">
             <span class="card-title">Stats</span>
             <p><strong>Gesture:</strong> <span id="gesture">…</span></p>
@@ -119,7 +137,7 @@
 
       <!-- Logs Column -->
       <div class="logs-col">
-        <div class="card">
+        <div class="card" style="height: 100%;">
           <div class="card-content">
             <span class="card-title">Logs</span>
             <div id="logMessages">…</div>
@@ -133,7 +151,7 @@
   <!-- Materialize JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script>
-    // Single-icon dark mode toggle 
+    // Dark mode toggle 
     const toggleIcon = document.getElementById('darkModeToggle');
     const body = document.body;
 
