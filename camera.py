@@ -1,8 +1,8 @@
 import cv2
 
 CAMERA_INDEX = 0
-FRAME_WIDTH, FRAME_HEIGHT = 640, 480
-FPS = 30
+FRAME_WIDTH, FRAME_HEIGHT = 1280, 720
+FPS = 60
 
 
 def setup_camera():

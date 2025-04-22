@@ -86,15 +86,14 @@ def generate_frames():
             infer_ms = (time.time() - t0) * 1000
 
             # debug logs
-            log(f"[📊] Model output: {output.tolist()}")
+            log(f"Model output: {output.tolist()}")
             idx = int(np.argmax(output))
             conf = float(output[idx])
-            log(f"[🔢] Chosen idx {idx}, conf {conf:.3f}")
 
             if conf > 0.7:
                 gesture = label_map[idx]
             confidence = conf
-            log(f"[🤖] Gesture: {gesture}, Confidence: {confidence:.2f}")
+            log(f"Gesture: {gesture}, Confidence: {confidence:.2f}")
 
         # compute FPS
         now = time.time()
