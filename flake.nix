@@ -19,6 +19,7 @@
         pkgs.ansible
         pkgs.ansible-lint
         pkgs.sshpass
+        pkgs.black
       ];
     };
   };

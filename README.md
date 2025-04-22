@@ -114,10 +114,35 @@ docker context use default
 to build the docker image locally run:
 
 ```shell
+docker buildx create --name multiarch-builder --driver docker-container --use
 docker buildx build \
   --builder multiarch-builder \
   --platform linux/arm64 \
   --load \
   -t seminar:latest \
   .
+```
+
+copy over manually:
+
+```shell
+docker save seminar:latest | ssh david@192.168.0.47 "docker load"
+```
+
+
+all in one go:
+
+```shell
+docker buildx build \
+  --builder multiarch-builder \
+  --platform linux/arm64 \
+  --load \
+  -t seminar:latest \
+  . && \
+docker save seminar:latest | ssh david@192.168.0.47 "
+  docker load && \
+  cd ~/seminar && \
+  docker compose down && \
+  docker compose up -d
+"
 ```

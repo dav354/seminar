@@ -2,42 +2,51 @@
 import cv2
 import time
 import numpy as np
+import psutil  # ← new
 import mediapipe as mp
-from flask import Flask, Response
+from flask import Flask, Response, render_template, jsonify
 from camera import setup_camera
 from draw import draw_landmarks
 from tflite_runtime.interpreter import Interpreter, load_delegate
-import sys
-
-print("[🚀] Booting Flask app...")
 
 # === Load Edge TPU Model ===
-try:
-    print("[📦] Loading Edge TPU model from models/model_edgetpu.tflite...")
-    interpreter = Interpreter(
-        model_path="models/model_edgetpu.tflite",
-        experimental_delegates=[load_delegate("libedgetpu.so.1")]
-    )
-    interpreter.allocate_tensors()
-    input_details = interpreter.get_input_details()
-    output_details = interpreter.get_output_details()
-    print("[✅] Edge TPU model loaded.")
-except Exception as e:
-    print(f"[❌] Failed to load model or Edge TPU delegate: {e}")
-    sys.exit(1)
+interpreter = Interpreter(
+    model_path="models/model_edgetpu.tflite",
+    experimental_delegates=[load_delegate("libedgetpu.so.1")],
+)
+interpreter.allocate_tensors()
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
 
 # Labels must match training order
-label_map = ['none', 'rock', 'paper', 'scissors']
+label_map = ["none", "rock", "paper", "scissors"]
 
 app = Flask(__name__)
 cap = setup_camera()
 mp_hands = mp.solutions.hands.Hands(static_image_mode=False, max_num_hands=1)
 
-if not cap.isOpened():
-    print("❌ Failed to open camera.")
-    sys.exit(1)
-else:
-    print("🎥 Camera opened successfully.")
+# In‑memory circular log buffer
+log_messages = []
+
+
+def log(msg: str):
+    print(msg)
+    log_messages.append(msg)
+    if len(log_messages) > 100:
+        log_messages.pop(0)
+
+
+# Shared structure for latest stats
+latest_stats = {
+    "gesture": "unknown",
+    "confidence": 0.0,
+    "fps": 0.0,
+    "cpu": 0.0,
+    "ram": 0.0,
+    "inference_ms": 0.0,
+    "cpu_temp": 0.0,
+}
+
 
 def generate_frames():
     prev_time = time.time()
@@ -45,72 +54,128 @@ def generate_frames():
     while True:
         ret, frame = cap.read()
         if not ret:
-            print("[⚠️] Frame capture failed.")
+            log("[⚠️] Frame capture failed.")
             continue
 
         frame = cv2.flip(frame, 1)
-        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        results = mp_hands.process(rgb_frame)
+        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        results = mp_hands.process(rgb)
 
-        gesture = "none"
+        gesture = "unknown"
+        confidence = 0.0
+        infer_ms = 0.0
+
         if results.multi_hand_landmarks:
-            print("[🖐] Hand detected.")
-            hand_landmarks = results.multi_hand_landmarks[0]
-            landmarks = [[lm.x, lm.y] for lm in hand_landmarks.landmark]
+            lm = results.multi_hand_landmarks[0]
+            pts = [[p.x, p.y] for p in lm.landmark]
+            draw_landmarks(frame, pts, frame.shape[1], frame.shape[0])
 
-            # Draw landmarks on frame
-            draw_landmarks(frame, landmarks, frame.shape[1], frame.shape[0])
+            coords = np.array(pts)
+            coords -= coords.mean(axis=0)
+            s = np.max(np.abs(coords)) or 1
+            coords /= s
+            inp = coords.flatten().astype(np.float32)
 
-            # Prepare model input
-            try:
-                coords = np.array(landmarks).flatten().astype(np.float32)
-                interpreter.set_tensor(input_details[0]['index'], [coords])
-                interpreter.invoke()
-                output_data = interpreter.get_tensor(output_details[0]['index'])
+            # measure inference time
+            t0 = time.time()
+            interpreter.set_tensor(input_details[0]["index"], [inp])
+            interpreter.invoke()
+            output = interpreter.get_tensor(output_details[0]["index"])[0]
+            infer_ms = (time.time() - t0) * 1000
 
-                # Get predicted gesture
-                predicted_idx = np.argmax(output_data[0])
-                gesture = label_map[predicted_idx]
-                print(f"[🤖] Prediction: {gesture}")
-            except Exception as e:
-                print(f"[❌] Inference error: {e}")
+            # debug logs
+            log(f"[📊] Model output: {output.tolist()}")
+            idx = int(np.argmax(output))
+            conf = float(output[idx])
+            log(f"[🔢] Chosen idx {idx}, conf {conf:.3f}")
 
-        # Display gesture and FPS
-        current_time = time.time()
-        fps = 1.0 / (current_time - prev_time)
-        prev_time = current_time
+            if conf > 0.7:
+                gesture = label_map[idx]
+            confidence = conf
+            log(f"[🤖] Gesture: {gesture}, Confidence: {confidence:.2f}")
 
-        cv2.putText(frame, f"Gesture: {gesture}", (10, 70),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 255), 2)
-        cv2.putText(frame, f"FPS: {fps:.2f}", (10, 30),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 0), 2)
+        # compute FPS
+        now = time.time()
+        fps = 1.0 / (now - prev_time)
+        prev_time = now
 
-        success, buffer = cv2.imencode(".jpg", frame)
-        if not success:
-            print("[⚠️] JPEG encoding failed.")
+        # system stats
+        cpu = psutil.cpu_percent(interval=None)
+        ram = psutil.virtual_memory().percent
+
+        # CPU temperature (tries common sensor labels)
+        temps = psutil.sensors_temperatures()
+        cpu_temp = None
+        for label in ("cpu_thermal", "cpu-thermal", "coretemp"):
+            if label in temps and temps[label]:
+                cpu_temp = temps[label][0].current
+                break
+        cpu_temp = round(cpu_temp or 0.0, 1)
+
+        # update shared stats
+        latest_stats.update(
+            {
+                "gesture": gesture,
+                "confidence": round(confidence, 2),
+                "fps": round(fps, 1),
+                "cpu": cpu,
+                "ram": ram,
+                "inference_ms": round(infer_ms, 1),
+                "cpu_temp": cpu_temp,
+            }
+        )
+
+        # overlay
+        cv2.putText(
+            frame,
+            f"Gesture: {gesture}",
+            (10, 70),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1.2,
+            (0, 255, 255),
+            2,
+        )
+        cv2.putText(
+            frame,
+            f"FPS: {fps:.1f}",
+            (10, 30),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1.0,
+            (255, 255, 0),
+            2,
+        )
+
+        ok, buf = cv2.imencode(".jpg", frame)
+        if not ok:
+            log("[⚠️] JPEG encoding failed.")
             continue
 
         yield (
-            b"--frame\r\n"
-            b"Content-Type: image/jpeg\r\n\r\n" + buffer.tobytes() + b"\r\n"
+            b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + buf.tobytes() + b"\r\n"
         )
+
 
 @app.route("/")
 def index():
-    return (
-        "<html><body>"
-        "<h1>Gesture Recognition Stream</h1>"
-        "<img src='/video' style='width:100%;height:auto;'/>"
-        "</body></html>"
-    )
+    return render_template("index.html")
 
-@app.route("/video")
+
+@app.route("/video_feed")
 def video_feed():
     return Response(
-        generate_frames(),
-        mimetype="multipart/x-mixed-replace; boundary=frame"
+        generate_frames(), mimetype="multipart/x-mixed-replace; boundary=frame"
     )
 
+
+@app.route("/gesture_data")
+def gesture_data():
+    return jsonify(latest_stats)
+
+
+@app.route("/logs")
+def logs():
+    return jsonify(log_messages)
+
+
 if __name__ == "__main__":
-    print("[🌍] Flask server starting on port 80...")
     app.run(host="0.0.0.0", port=80, threaded=True, debug=False)
