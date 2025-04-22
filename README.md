@@ -32,12 +32,12 @@
 
 ## Todo
 
-![image](assets/1.png)
+![image](assets/2.png)
 
 - [x] gesture recognition
 - [x] video stream
+- [x] webui
 - [o] other/custom model for rock, paper, scissors
-  - no gestures are recognized
 - [ ] game logic
 
 ## Venv
