@@ -29,6 +29,15 @@
     body.dark-theme .nav-wrapper {
       background-color: #333 !important;
     }
+
+    /* Make the icon clickable */
+    .dark-toggle {
+      cursor: pointer;
+      color: white;
+      font-size: 1.5rem;
+      line-height: 1.5rem;
+      margin-right: 1rem;
+    }
   </style>
 </head>
 
@@ -40,14 +49,8 @@
       <a href="#" class="brand-logo">Gesture‑Stream</a>
       <ul class="right">
         <li>
-          <div class="switch" style="margin-top: 12px;">
-            <label style="color: white;">
-              ☀️
-              <input type="checkbox" id="darkModeToggle">
-              <span class="lever"></span>
-              🌙
-            </label>
-          </div>
+          <!-- Single icon toggles dark mode -->
+          <i id="darkModeToggle" class="material-icons dark-toggle">brightness_6</i>
         </li>
       </ul>
     </div>
@@ -96,20 +99,27 @@
   <!-- Materialize JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script>
-    // Dark mode toggle
-    const toggle = document.getElementById('darkModeToggle');
+    // Single-icon dark mode toggle
+    const toggleIcon = document.getElementById('darkModeToggle');
     const body = document.body;
+
+    // Initialize from saved preference
     if (localStorage.getItem('darkMode') === 'enabled') {
       body.classList.add('dark-theme');
-      toggle.checked = true;
+      toggleIcon.textContent = 'brightness_7';
+    } else {
+      toggleIcon.textContent = 'brightness_2';
     }
-    toggle.addEventListener('change', () => {
-      if (toggle.checked) {
-        body.classList.add('dark-theme');
+
+    toggleIcon.addEventListener('click', () => {
+      if (body.classList.toggle('dark-theme')) {
+        // Now dark
         localStorage.setItem('darkMode', 'enabled');
+        toggleIcon.textContent = 'brightness_7';
       } else {
-        body.classList.remove('dark-theme');
+        // Now light
         localStorage.setItem('darkMode', 'disabled');
+        toggleIcon.textContent = 'brightness_2';
       }
     });
 
