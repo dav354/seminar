@@ -78,7 +78,9 @@ def generate_frames():
 
             # measure inference time
             t0 = time.time()
-            interpreter.set_tensor(input_details[0]["index"], [inp])
+            scale, zero_point = input_details[0]["quantization"]
+            quantized_input = (inp / scale + zero_point).astype(np.uint8)
+            interpreter.set_tensor(input_details[0]["index"], [quantized_input])
             interpreter.invoke()
             output = interpreter.get_tensor(output_details[0]["index"])[0]
             infer_ms = (time.time() - t0) * 1000
@@ -103,14 +105,10 @@ def generate_frames():
         cpu = psutil.cpu_percent(interval=None)
         ram = psutil.virtual_memory().percent
 
-        # CPU temperature (tries common sensor labels)
-        temps = psutil.sensors_temperatures()
-        cpu_temp = None
-        for label in ("cpu_thermal", "cpu-thermal", "coretemp"):
-            if label in temps and temps[label]:
-                cpu_temp = temps[label][0].current
-                break
-        cpu_temp = round(cpu_temp or 0.0, 1)
+        # system stats
+        cpu = psutil.cpu_percent(interval=None)
+        vm = psutil.virtual_memory()
+        ram_str = f"{vm.used // (1024*1024)}MB / {vm.total // (1024*1024)}MB"
 
         # update shared stats
         latest_stats.update(
@@ -119,7 +117,7 @@ def generate_frames():
                 "confidence": round(confidence, 2),
                 "fps": round(fps, 1),
                 "cpu": cpu,
-                "ram": ram,
+                "ram": ram_str,
                 "inference_ms": round(infer_ms, 1),
                 "cpu_temp": cpu_temp,
             }

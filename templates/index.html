@@ -1,50 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Gesture Recognition</title>
 
   <!-- Materialize CSS & Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
-  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
 
   <style>
-    /* Custom dark theme overrides */
+    /* Dark theme overrides */
     body.dark-theme {
       background: #212121 !important;
       color: #fff !important;
     }
+
     body.dark-theme .card {
       background: #424242 !important;
     }
+
     body.dark-theme .card .card-content,
     body.dark-theme .card .card-title {
       color: #fff !important;
     }
+
     body.dark-theme .navbar,
     body.dark-theme .nav-wrapper {
       background-color: #333 !important;
     }
   </style>
 </head>
-<body>
+
+<body class="">
 
   <!-- Navbar -->
   <nav class="navbar blue">
     <div class="nav-wrapper container">
-      <a href="#" class="brand-logo">Gesture-Stream</a>
-      <!-- Dark Mode Switch -->
+      <a href="#" class="brand-logo">Gesture‑Stream</a>
       <ul class="right">
         <li>
-          <div class="switch">
-            <label>
-              <i class="material-icons">wb_sunny</i>
+          <div class="switch" style="margin-top: 12px;">
+            <label style="color: white;">
+              ☀️
               <input type="checkbox" id="darkModeToggle">
               <span class="lever"></span>
-              <i class="material-icons">nights_stay</i>
+              🌙
             </label>
           </div>
         </li>
@@ -73,10 +74,10 @@
             <p><strong>Gesture:</strong> <span id="gesture">…</span></p>
             <p><strong>FPS:</strong> <span id="fps">…</span></p>
             <p><strong>Confidence:</strong> <span id="confidence">…</span></p>
-            <p><strong>CPU %:</strong> <span id="cpu">…</span></p>
-            <p><strong>RAM %:</strong> <span id="ram">…</span></p>
-            <p><strong>Infer (ms):</strong> <span id="infer">…</span></p>
-            <p><strong>CPU Temp (°C):</strong> <span id="cpu_temp">…</span></p>
+            <p><strong>CPU %:</strong> <span id="cpu">…</span></p>
+            <p><strong>RAM:</strong> <span id="ram">…</span></p>
+            <p><strong>Infer (ms):</strong> <span id="infer">…</span></p>
+            <p><strong>CPU Temp (°C):</strong> <span id="cpu_temp">…</span></p>
           </div>
         </div>
 
@@ -112,17 +113,17 @@
       }
     });
 
-    // Fetch and display all stats
+    // Fetch and display stats
     async function fetchStats() {
       const res = await fetch('/gesture_data');
       const stats = await res.json();
-      document.getElementById('gesture').innerText    = stats.gesture;
-      document.getElementById('fps').innerText        = stats.fps;
+      document.getElementById('gesture').innerText = stats.gesture;
+      document.getElementById('fps').innerText = stats.fps;
       document.getElementById('confidence').innerText = stats.confidence;
-      document.getElementById('cpu').innerText        = stats.cpu;
-      document.getElementById('ram').innerText        = stats.ram;
-      document.getElementById('infer').innerText      = stats.inference_ms;
-      document.getElementById('cpu_temp').innerText   = stats.cpu_temp;
+      document.getElementById('cpu').innerText = stats.cpu;
+      document.getElementById('ram').innerText = stats.ram;
+      document.getElementById('infer').innerText = stats.inference_ms;
+      document.getElementById('cpu_temp').innerText = stats.cpu_temp;
     }
 
     // Fetch and display logs
@@ -130,11 +131,12 @@
       const res = await fetch('/logs');
       const logs = await res.json();
       document.getElementById('logMessages')
-              .innerHTML = logs.slice(-20).join("<br>");
+        .innerHTML = logs.slice(-20).join("<br>");
     }
 
     setInterval(fetchStats, 500);
     setInterval(fetchLogs, 1000);
   </script>
 </body>
+
 </html>

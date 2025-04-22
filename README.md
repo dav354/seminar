@@ -35,10 +35,10 @@
 ![image](assets/1.png)
 
 - [x] gesture recognition
-- [ ] other/custom model for rock, paper, scissors
+- [x] video stream
+- [o] other/custom model for rock, paper, scissors
+  - no gestures are recognized
 - [ ] game logic
-- [ ] video stream
-- [ ] tflight models
 
 ## Venv
 
