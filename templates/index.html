@@ -10,90 +10,7 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
 
-  <style>
-    /* Dark theme overrides (unchanged) */
-    body.dark-theme {
-      background: #212121 !important;
-      color: #fff !important;
-    }
-
-    body.dark-theme .card {
-      background: #424242 !important;
-    }
-
-    body.dark-theme .card .card-content,
-    body.dark-theme .card .card-title {
-      color: #fff !important;
-    }
-
-    body.dark-theme .navbar,
-    body.dark-theme .nav-wrapper {
-      background-color: #333 !important;
-    }
-
-    /* Full‑width container */
-    .container-fluid {
-      padding: 0 10px !important;
-      width: 100% !important;
-      max-width: 100% !important;
-    }
-
-    /* Video always max size */
-    .video-stream img {
-      width: 100%;
-      height: auto;
-      max-height: calc(100vh - 220px);
-      object-fit: cover;
-      margin-top: 15px;
-    }
-
-    /* Stats row */
-    .stats-row {
-      display: flex;
-      flex-wrap: wrap;
-      margin-top: 16px;
-      gap: 16px;
-      align-items: stretch;
-      /* stretch all cards to same height */
-    }
-
-    .stats-card {
-      flex: 1 1 280px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .stats-card .card {
-      height: 100%;
-      /* card fills its column */
-    }
-
-    .stats-card .card-content {
-      flex: 1;
-    }
-
-    /* Emphasize the gesture type & confidence values */
-    #gesture,
-    #confidence {
-      font-size: 1.3rem;
-      font-weight: 500;
-    }
-
-    @media (max-width: 800px) {
-      .stats-card {
-        flex: 1 1 100%;
-      }
-    }
-
-    /* Dark mode toggle icon */
-    .dark-toggle {
-      cursor: pointer;
-      color: white;
-      font-size: 1.5rem;
-      line-height: 1.5rem;
-      margin-right: 1rem;
-    }
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 
 <body class="">
@@ -147,8 +64,8 @@
           <div class="card-content">
             <span class="card-title">System</span>
             <p><strong>CPU %:</strong> <span id="cpu">…</span></p>
-            <p><strong>RAM:</strong> <span id="ram">…</span></p>
             <p><strong>CPU Temp (°C):</strong> <span id="cpu_temp">…</span></p>
+            <p><strong>RAM:</strong> <span id="ram">…</span></p>
           </div>
         </div>
       </div>
@@ -159,7 +76,7 @@
   <!-- Materialize JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script>
-    // Dark‑mode toggle (unchanged)
+    // Dark‑mode toggle 
     const toggleIcon = document.getElementById('darkModeToggle');
     const body = document.body;
     if (localStorage.getItem('darkMode') === 'enabled') {
