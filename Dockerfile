@@ -45,6 +45,7 @@ WORKDIR /app
 COPY app.py camera.py draw.py ./
 COPY models/model_edgetpu.tflite ./models/model_edgetpu.tflite
 COPY templates/ ./templates/
+COPY static ./static
 
 EXPOSE 80
 
