@@ -1,3 +1,19 @@
+/* Dark‑mode toggle icon */
+.dark-toggle {
+    cursor: pointer;
+    color: white;
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+    margin-right: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+    .stats-card {
+        flex: 1 1 100%;
+    }
+}
+
 /* Dark theme overrides */
 body.dark-theme {
     background: #212121 !important;
@@ -41,6 +57,7 @@ body.dark-theme .nav-wrapper {
     margin-top: 16px;
     gap: 16px;
     align-items: stretch;
+    /* stretch all cards to same height */
 }
 
 .stats-card {
@@ -51,16 +68,11 @@ body.dark-theme .nav-wrapper {
 
 .stats-card .card {
     height: 100%;
+    /* card fills its column */
 }
 
 .stats-card .card-content {
     flex: 1;
-}
-
-/* Headers and keys bold */
-.card-title,
-.stats-card .card-content p strong {
-    font-weight: 700;
 }
 
 /* Emphasize gesture & confidence */
@@ -72,7 +84,13 @@ body.dark-theme .nav-wrapper {
     color: #FFD54F;
 }
 
-/* Dark‑mode toggle icon */
+@media (max-width: 800px) {
+    .stats-card {
+        flex: 1 1 100%;
+    }
+}
+
+/* Dark mode toggle icon */
 .dark-toggle {
     cursor: pointer;
     color: white;
@@ -81,9 +99,8 @@ body.dark-theme .nav-wrapper {
     margin-right: 1rem;
 }
 
-/* Responsive */
-@media (max-width: 800px) {
-    .stats-card {
-        flex: 1 1 100%;
-    }
+/* Headers and keys bold */
+.card-title,
+.stats-card .card-content p strong {
+    font-weight: 700;
 }
