@@ -2,7 +2,7 @@
 import cv2
 import time
 import numpy as np
-import psutil  # ← new
+import psutil
 import mediapipe as mp
 from flask import Flask, Response, render_template, jsonify
 from camera import setup_camera
@@ -42,7 +42,7 @@ latest_stats = {
     "confidence": 0.0,
     "fps": 0.0,
     "cpu": 0.0,
-    "ram": 0.0,
+    "ram": "0MB / 0MB",
     "inference_ms": 0.0,
     "cpu_temp": 0.0,
 }
@@ -76,7 +76,7 @@ def generate_frames():
             coords /= s
             inp = coords.flatten().astype(np.float32)
 
-            # measure inference time
+            # measure inference time & quantize input
             t0 = time.time()
             scale, zero_point = input_details[0]["quantization"]
             quantized_input = (inp / scale + zero_point).astype(np.uint8)
@@ -103,12 +103,17 @@ def generate_frames():
 
         # system stats
         cpu = psutil.cpu_percent(interval=None)
-        ram = psutil.virtual_memory().percent
-
-        # system stats
-        cpu = psutil.cpu_percent(interval=None)
         vm = psutil.virtual_memory()
         ram_str = f"{vm.used // (1024*1024)}MB / {vm.total // (1024*1024)}MB"
+
+        # CPU temperature
+        temps = psutil.sensors_temperatures()
+        cpu_temp = 0.0
+        for label in ("cpu_thermal", "cpu-thermal", "coretemp"):
+            if label in temps and temps[label]:
+                cpu_temp = temps[label][0].current
+                break
+        cpu_temp = round(cpu_temp, 1)
 
         # update shared stats
         latest_stats.update(
@@ -123,7 +128,7 @@ def generate_frames():
             }
         )
 
-        # overlay
+        # overlay on frame
         cv2.putText(
             frame,
             f"Gesture: {gesture}",
