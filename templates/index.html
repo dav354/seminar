@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
 
   <style>
-    /* Dark theme overrides  */
+    /* Dark theme overrides (unchanged) */
     body.dark-theme {
       background: #212121 !important;
       color: #fff !important;
@@ -31,56 +31,36 @@
       background-color: #333 !important;
     }
 
-    /* Padding on sides */
-    .container {
-      padding-left: 10px !important;
-      padding-right: 10px !important;
-    }
-
+    /* Full‑width container */
     .container-fluid {
-      padding-left: 10px !important;
-      padding-right: 10px !important;
+      padding: 0 10px !important;
       width: 100% !important;
       max-width: 100% !important;
     }
 
-    /* Responsive video max size */
+    /* Video always max size */
     .video-stream img {
       width: 100%;
       height: auto;
-      max-height: calc(100vh - 280px);
+      max-height: calc(100vh - 220px);
       object-fit: cover;
       margin-top: 15px;
     }
 
-    /* Stats and Logs layout */
-    .bottom-row {
+    /* Stats row */
+    .stats-row {
       display: flex;
       flex-wrap: wrap;
-      margin-top: 15px;
-      gap: 10px;
+      margin-top: 16px;
+      gap: 16px;
     }
 
-    .stats-col,
-    .logs-col {
-      flex: 1 1 300px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .card-content {
-      flex: 1;
-    }
-
-    #logMessages {
-      font-size: 0.9em;
-      white-space: pre-line;
+    .stats-card {
+      flex: 1 1 280px;
     }
 
     @media (max-width: 800px) {
-
-      .stats-col,
-      .logs-col {
+      .stats-card {
         flex: 1 1 100%;
       }
     }
@@ -101,7 +81,7 @@
   <!-- Navbar -->
   <nav class="navbar blue">
     <div class="nav-wrapper container-fluid">
-      <a href="#" class="brand-logo">Gesture-Stream</a>
+      <a href="#" class="brand-logo">Gesture‑Stream</a>
       <ul class="right">
         <li>
           <i id="darkModeToggle" class="material-icons dark-toggle">brightness_6</i>
@@ -110,37 +90,46 @@
     </div>
   </nav>
 
+  <!-- Full‑width container -->
   <div class="container-fluid">
     <!-- Video Stream -->
     <div class="video-stream">
       <img src="{{ url_for('video_feed') }}" alt="Live Video">
     </div>
 
-    <!-- Bottom row: Stats and Logs -->
-    <div class="bottom-row">
+    <!-- Stats grouped into three cards -->
+    <div class="stats-row">
 
-      <!-- Stats Column -->
-      <div class="stats-col">
-        <div class="card" style="height: 100%;">
+      <!-- Gesture & Confidence -->
+      <div class="stats-card">
+        <div class="card">
           <div class="card-content">
-            <span class="card-title">Stats</span>
-            <p><strong>Gesture:</strong> <span id="gesture">…</span></p>
-            <p><strong>FPS:</strong> <span id="fps">…</span></p>
+            <span class="card-title">Gesture</span>
+            <p><strong>Type:</strong> <span id="gesture">…</span></p>
             <p><strong>Confidence:</strong> <span id="confidence">…</span></p>
-            <p><strong>CPU %:</strong> <span id="cpu">…</span></p>
-            <p><strong>RAM:</strong> <span id="ram">…</span></p>
-            <p><strong>Infer (ms):</strong> <span id="infer">…</span></p>
-            <p><strong>CPU Temp (°C):</strong> <span id="cpu_temp">…</span></p>
           </div>
         </div>
       </div>
 
-      <!-- Logs Column -->
-      <div class="logs-col">
-        <div class="card" style="height: 100%;">
+      <!-- Performance -->
+      <div class="stats-card">
+        <div class="card">
           <div class="card-content">
-            <span class="card-title">Logs</span>
-            <div id="logMessages">…</div>
+            <span class="card-title">Performance</span>
+            <p><strong>FPS:</strong> <span id="fps">…</span></p>
+            <p><strong>Infer (ms):</strong> <span id="infer">…</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- System -->
+      <div class="stats-card">
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">System</span>
+            <p><strong>CPU %:</strong> <span id="cpu">…</span></p>
+            <p><strong>RAM:</strong> <span id="ram">…</span></p>
+            <p><strong>CPU Temp (°C):</strong> <span id="cpu_temp">…</span></p>
           </div>
         </div>
       </div>
@@ -151,17 +140,15 @@
   <!-- Materialize JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script>
-    // Dark mode toggle 
+    // Dark‑mode toggle (unchanged)
     const toggleIcon = document.getElementById('darkModeToggle');
     const body = document.body;
-
     if (localStorage.getItem('darkMode') === 'enabled') {
       body.classList.add('dark-theme');
       toggleIcon.textContent = 'brightness_7';
     } else {
       toggleIcon.textContent = 'brightness_2';
     }
-
     toggleIcon.addEventListener('click', () => {
       if (body.classList.toggle('dark-theme')) {
         localStorage.setItem('darkMode', 'enabled');
@@ -175,26 +162,17 @@
     // Fetch and display stats
     async function fetchStats() {
       const res = await fetch('/gesture_data');
-      const stats = await res.json();
-      document.getElementById('gesture').innerText = stats.gesture;
-      document.getElementById('fps').innerText = stats.fps;
-      document.getElementById('confidence').innerText = stats.confidence;
-      document.getElementById('cpu').innerText = stats.cpu;
-      document.getElementById('ram').innerText = stats.ram;
-      document.getElementById('infer').innerText = stats.inference_ms;
-      document.getElementById('cpu_temp').innerText = stats.cpu_temp;
-    }
-
-    // Fetch and display logs
-    async function fetchLogs() {
-      const res = await fetch('/logs');
-      const logs = await res.json();
-      document.getElementById('logMessages')
-        .innerHTML = logs.slice(-20).join("<br>");
+      const s = await res.json();
+      document.getElementById('gesture').innerText = s.gesture;
+      document.getElementById('confidence').innerText = s.confidence;
+      document.getElementById('fps').innerText = s.fps;
+      document.getElementById('infer').innerText = s.inference_ms;
+      document.getElementById('cpu').innerText = s.cpu;
+      document.getElementById('ram').innerText = s.ram;
+      document.getElementById('cpu_temp').innerText = s.cpu_temp;
     }
 
     setInterval(fetchStats, 500);
-    setInterval(fetchLogs, 1000);
   </script>
 </body>
 

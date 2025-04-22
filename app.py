@@ -127,26 +127,6 @@ def generate_frames():
             }
         )
 
-        # overlay on frame
-        cv2.putText(
-            frame,
-            f"Gesture: {gesture}",
-            (10, 70),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            1.2,
-            (0, 255, 255),
-            2,
-        )
-        cv2.putText(
-            frame,
-            f"FPS: {fps:.1f}",
-            (10, 30),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            1.0,
-            (255, 255, 0),
-            2,
-        )
-
         ok, buf = cv2.imencode(".jpg", frame)
         if not ok:
             log("[⚠️] JPEG encoding failed.")
