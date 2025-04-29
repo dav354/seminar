@@ -1,7 +1,9 @@
 ---
 services:
   gesture-pi:
-    image: ghcr.io/dav354/seminar:latest
+    build:
+      context: .     # Assuming the Dockerfile is in the same directory
+      dockerfile: Dockerfile
     container_name: gesture-pi
     privileged: true
     ports:

@@ -8,6 +8,7 @@ from flask import Flask, Response, render_template, jsonify
 from camera import setup_camera
 from draw import draw_landmarks
 from tflite_runtime.interpreter import Interpreter, load_delegate
+from collections import deque
 
 # === Load Edge TPU Model ===
 interpreter = Interpreter(
@@ -27,6 +28,9 @@ mp_hands = mp.solutions.hands.Hands(static_image_mode=False, max_num_hands=1)
 
 # In‑memory circular log buffer
 log_messages = []
+
+# Smoothing buffer for predictions
+PREDICTION_HISTORY = deque(maxlen=5)
 
 
 def log(msg: str):
@@ -78,17 +82,22 @@ def generate_frames():
 
             # measure inference time & quantize input
             t0 = time.time()
-            scale, zero_point = input_details[0]["quantization"]
-            quantized_input = (inp / scale + zero_point).astype(np.uint8)
+            in_scale, in_zero_point = input_details[0]["quantization"]
+            quantized_input = (inp / in_scale + in_zero_point).astype(np.uint8)
             interpreter.set_tensor(input_details[0]["index"], [quantized_input])
             interpreter.invoke()
             output = interpreter.get_tensor(output_details[0]["index"])[0]
+            out_scale, out_zero_point = output_details[0]["quantization"]
+            dequantized = (output.astype(np.float32) - out_zero_point) * out_scale
+
             infer_ms = (time.time() - t0) * 1000
 
-            # debug logs
-            log(f"Model output: {output.tolist()}")
-            idx = int(np.argmax(output))
-            conf = float(output[idx])
+            # smoothing
+            PREDICTION_HISTORY.append(dequantized)
+            avg_pred = np.mean(PREDICTION_HISTORY, axis=0)
+
+            idx = int(np.argmax(avg_pred))
+            conf = float(avg_pred[idx])
 
             if conf > 0.7:
                 gesture = label_map[idx]
