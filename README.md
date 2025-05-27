@@ -128,3 +128,28 @@ copy over manually:
 ```shell
 docker save seminar:latest | ssh david@192.168.0.47 "docker load"
 ```
+
+# Pepepr port scan
+```
+↪ sudo nix run nixpkgs#nmap -- -sV -O -p- 192.168.3.68
+Starting Nmap 7.96 ( https://nmap.org ) at 2025-05-27 14:46 CEST
+Note: Host seems down. If it is really up, but blocking our ping probes, try -Pn
+Nmap done: 1 IP address (0 hosts up) scanned in 6.28 seconds
+
+
+↪ sudo nix run nixpkgs#nmap -- -sV -O -p- 192.168.3.69
+Starting Nmap 7.96 ( https://nmap.org ) at 2025-05-27 14:51 CEST
+Nmap scan report for 192.168.3.69
+Host is up (0.0099s latency).
+Not shown: 65532 closed tcp ports (reset)
+PORT     STATE SERVICE         VERSION
+22/tcp   open  ssh             OpenSSH 8.0 (protocol 2.0)
+9443/tcp open  tungsten-https?
+9503/tcp open  unknown
+MAC Address: 48:A9:D2:A8:D8:12 (Wistron Neweb)
+Device type: general purpose
+Running: Linux 3.X|4.X
+OS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4
+OS details: Linux 3.2 - 4.14
+Network Distance: 1 hop
+```
