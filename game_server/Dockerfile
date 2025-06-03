@@ -40,12 +40,8 @@ RUN curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dea
 
 COPY --from=builder /install /usr/local
 
-# Copy app and model
 WORKDIR /app
-COPY app.py camera.py draw.py game_logic.py gesture_buffer.py ./
-COPY models/model_edgetpu.tflite ./models/model_edgetpu.tflite
-COPY templates/ ./templates/
-COPY static ./static
+COPY . .
 
 EXPOSE 80
 

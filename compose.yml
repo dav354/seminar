@@ -1,11 +1,13 @@
 ---
 services:
-  gesture-pi:
+  rps:
     image: ghcr.io/dav354/rps:latest
-    container_name: gesture-pi
+    container_name: rps
     privileged: true
     ports:
       - 7000:80
+    environment:
+      PEPPER_IP: http://192.168.3.69:5000
     devices:
       - "/dev/bus/usb:/dev/bus/usb"    # Coral Edge TPU
     restart: unless-stopped

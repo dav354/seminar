@@ -3,6 +3,7 @@
 
 import qi
 import time
+import cv2 
 import numpy as np
 from flask import Flask, Response, request, jsonify
 
@@ -32,7 +33,6 @@ fps = 30
 name_id = video_service.subscribeCamera(camera_name, camera_index, resolution, color_space, fps)
 
 def generate():
-    import cv2  # Import inside function like in old version
     while True:
         image = video_service.getImageRemote(name_id)
         if image is None:
@@ -52,7 +52,7 @@ def generate():
 
         yield (b"--frame\r\n"
                b"Content-Type: image/jpeg\r\n\r\n" + jpeg.tobytes() + b"\r\n")
-        time.sleep(0.1)
+        time.sleep(0.001)
 
 @app.route('/video_feed')
 def video_feed():

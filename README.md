@@ -21,6 +21,8 @@ This repo contains the code for our seminar project. The goal is detect some han
 * [Overview](#overview)
   * [Hardware](#hardware)
   * [Software](#software)
+    * [Game Server](#game-server)
+    * [Pepper API](#pepper-api)
 * [Setup](#setup)
   * [Venv](#venv)
   * [Install edge tpu repo](#install-edge-tpu-repo)
@@ -57,6 +59,35 @@ This setup constists of three parts:
 - **Model Training**
 
   [This repo](https://github.com/dav354/model_training) contains the training script and data to build the custom ai model
+
+### Game Server
+
+The following environment variables are available. Set via the [compose.yml](compose.yml):
+
+|env|format|description|
+|:-:|-|-|
+|`PEPPER_IP`|`http://ip-address:port`|The Ip address of the remote Pepper robot which runs the api.|
+
+### Pepper Api
+
+This API allows you to interact with a Pepper robot for camera streaming, gesture control, and speech (TTS and ASR). All endpoints are served over HTTP.
+
+### **Endpoints**
+
+#### **1. Video Stream**
+
+* **GET `/video_feed`**
+  Returns an MJPEG video stream from the robot’s camera.
+
+#### **2. Gestures**
+
+* **GET `/gesture/<gesture_name>`**
+  Makes Pepper perform a gesture.
+  **Supported values:** `rock`, `paper`, `scissors`, `swing`
+  **Returns:**
+
+  * `200 OK` if successful
+  * `400 Bad Request` if the gesture is unknown
 
 # Setup
 

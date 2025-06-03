@@ -29,10 +29,21 @@ body.dark-theme .card .card-title {
     color: #fff !important;
 }
 
-body.dark-theme .navbar,
+body.dark-theme nav,
 body.dark-theme .nav-wrapper {
     background-color: #333 !important;
 }
+
+nav,
+.nav-wrapper {
+    background-color: #1976d2 !important;
+}
+
+body.dark-theme nav,
+body.dark-theme .nav-wrapper {
+    background-color: #333 !important;
+}
+
 
 /* Full‑width container */
 .container-fluid {
@@ -103,4 +114,76 @@ body.dark-theme .nav-wrapper {
 .card-title,
 .stats-card .card-content p strong {
     font-weight: 700;
+}
+
+#camera-stream {
+    width: 100%;
+    max-width: 640px;
+    aspect-ratio: 4/3;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    background: #222;
+    border-radius: 8px;
+}
+
+.status-dot {
+    font-size: 2.1em;
+    vertical-align: middle;
+}
+
+.status-dot.pulse {
+    animation: pulse-red 1.5s infinite;
+}
+
+@keyframes pulse-red {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.center-row {
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width: 992px) {
+    .row {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .camera-vertical-center {
+        align-items: flex-start;
+        /* Or center, if you want vertical centering in mobile too */
+        height: auto;
+    }
+}
+
+
+.row {
+    display: flex;
+    align-items: stretch;
+}
+
+.camera-col {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+}
+
+.camera-vertical-center {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
 }
