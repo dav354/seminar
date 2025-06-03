@@ -13,7 +13,7 @@ from gesture_buffer import GestureCollector
 import threading
 
 # === Configuration ===
-PEPPER_IP="http://192.168.3.156:5000"
+PEPPER_IP="http://192.168.3.69:5000"
 label_map = ["none", "rock", "paper", "scissors"]
 gesture_collector = GestureCollector(duration=2.0)
 PREDICTION_HISTORY = deque(maxlen=5)
