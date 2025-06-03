@@ -56,7 +56,7 @@ This setup constists of three parts:
 
 - **Model Training**
 
-  This repo contains the training script and data to build the custom ai model
+  [This repo](https://github.com/dav354/model_training) contains the training script and data to build the custom ai model
 
 # Setup
 
