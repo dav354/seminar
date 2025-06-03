@@ -16,12 +16,25 @@
 
 This repo contains the code for our seminar project. The goal is detect some hand gestures via the internal camera of the [pepper robot](https://aldebaran.com/en/). And to play the rock paper scissors game against it.
 
+## Table of Contents
+
+* [Overview](#overview)
+  * [Hardware](#hardware)
+  * [Software](#software)
+* [Setup](#setup)
+  * [Venv](#venv)
+  * [Install edge tpu repo](#install-edge-tpu-repo)
+  * [Pi installation with ansible](#pi-installation-with-ansible)
+  * [Manual Build](#manual-build)
+  * [PI Wifi Cli](#pi-wifi-cli)
+
 # Overview
+
 ## Hardware
 
 To run this setup, you will need the following parts:
-- Pepper Robot
-- Raspberry Pi (We use the Pi5 with 8G Ram, which is Overkill):
+- Pepper Robot (v2.9)
+- Raspberry Pi (We use the Pi5 with 8G Ram, which is overkill):
   - SD-Card
   - Powersupply
   - Google Coral Tpu USB
