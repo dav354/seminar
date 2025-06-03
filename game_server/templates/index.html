@@ -17,11 +17,16 @@
   <nav>
     <div class="nav-wrapper container">
       <a href="#" class="brand-logo">Rock Pepper Scissors</a>
-      <ul class="right">
+      <ul class="right nav-icons">
         <li>
-          <span id="tpu-indicator" title="System status" style="vertical-align:middle; margin-right: 20px;"></span>
+          <span id="tpu-indicator" title="System status"></span>
         </li>
-        <li><i id="darkModeToggle" class="material-icons dark-toggle">brightness_6</i></li>
+        <li>
+          <i id="armToggle" class="material-icons nav-arm-btn">play_arrow</i>
+        </li>
+        <li>
+          <i id="darkModeToggle" class="material-icons dark-toggle">brightness_6</i>
+        </li>
       </ul>
     </div>
   </nav>
@@ -143,6 +148,20 @@
           document.getElementById("score").innerText = "Game reset. Ready to play!";
         });
     }
+
+    const armToggle = document.getElementById('armToggle');
+    let isArmed = false;
+
+    armToggle.addEventListener('click', () => {
+      isArmed = !isArmed;
+      if (isArmed) {
+        armToggle.textContent = 'stop';
+        armToggle.classList.add('armed');
+      } else {
+        armToggle.textContent = 'play_arrow';
+        armToggle.classList.remove('armed');
+      }
+    });
 
     setInterval(fetchStats, 2000);
   </script>

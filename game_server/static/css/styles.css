@@ -91,8 +91,7 @@ body.dark-theme .nav-wrapper {
 #confidence {
     font-size: 1.3rem;
     font-weight: 500;
-    /* pick a poppy accent color: Amber lighten-2 */
-    color: #FFD54F;
+    color: #e9ba20;
 }
 
 @media (max-width: 800px) {
@@ -130,7 +129,6 @@ body.dark-theme .nav-wrapper {
 
 .status-dot {
     font-size: 2.1em;
-    vertical-align: middle;
 }
 
 .status-dot.pulse {
@@ -169,7 +167,6 @@ body.dark-theme .nav-wrapper {
     }
 }
 
-
 .row {
     display: flex;
     align-items: stretch;
@@ -186,4 +183,32 @@ body.dark-theme .nav-wrapper {
     align-items: center;
     height: 100%;
     width: 100%;
+}
+
+.nav-icons {
+    display: flex;
+    align-items: center;
+    /* Vertically center children (the li’s) */
+    height: 100%;
+    /* Make sure it takes full nav height */
+}
+
+.nav-icons li {
+    display: flex;
+    align-items: center;
+    /* Center each icon or span inside its li */
+    height: 100%;
+}
+
+.nav-arm-btn {
+    cursor: pointer;
+    font-size: 2.1em;
+    color: #38bd04;
+    transition: color 0.2s;
+    margin-right: 1rem;
+    margin-left: 1rem;
+}
+
+.nav-arm-btn.armed {
+    color: #fa0505;
 }

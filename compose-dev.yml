@@ -1,0 +1,18 @@
+---
+services:
+  rps:
+    build:
+      context: game_server
+    container_name: rps
+    privileged: true
+    ports:
+      - 7000:80
+    environment:
+      PEPPER_IP: http://192.168.3.69:5000
+    volumes:
+      - "./game_server:/repo"
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"    # Coral Edge TPU
+    restart: unless-stopped
+
+
