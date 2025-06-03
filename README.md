@@ -153,3 +153,27 @@ OS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4
 OS details: Linux 3.2 - 4.14
 Network Distance: 1 hop
 ```
+
+
+### PI Wifi Cli
+
+```bash
+# sudo nano /etc/netplan/01-wlan.yaml
+
+network:
+  version: 2
+  wifis:
+    wlan0:
+      optional: true
+      access-points:
+        "HUAWEI-0100T4":
+          password: "YourPassword"
+      dhcp4: true
+```
+
+and then apply the config
+
+```bash
+sudo chmod 600 /etc/netplan/01-wlan.yaml
+sudo netplan apply
+```

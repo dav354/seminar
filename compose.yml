@@ -10,5 +10,5 @@ services:
       - 80:80
     devices:
       - "/dev/bus/usb:/dev/bus/usb"    # Coral Edge TPU
-      - "/dev/video0:/dev/video0"      # USB webcam
+      # - "/dev/video0:/dev/video0"      # USB webcam
     restart: unless-stopped
