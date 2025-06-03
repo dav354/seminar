@@ -1,0 +1,11 @@
+---
+services:
+  gesture-pi:
+    image: ghcr.io/dav354/rps:latest
+    container_name: gesture-pi
+    privileged: true
+    ports:
+      - 7000:80
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"    # Coral Edge TPU
+    restart: unless-stopped

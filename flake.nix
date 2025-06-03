@@ -1,5 +1,9 @@
 {
-  description = "Dev shell for the seminar";
+  description = "Dev shell for the RPS";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
+  };
 
   outputs = {
     self,
@@ -20,6 +24,12 @@
         pkgs.ansible-lint
         pkgs.sshpass
         pkgs.black
+
+        (pkgs.python39.withPackages (ps: [
+          ps.flask
+          ps.opencv4
+          ps.numpy
+        ]))
       ];
     };
   };

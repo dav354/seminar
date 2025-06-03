@@ -8,39 +8,48 @@
   <img src="assets/logo_white.png"  
     alt="Logo"
     width="400" />
+  <br/>
+  <br/>
 </p>
+<h1 align="center">Rock Pepper Scissors</h1>
+  <br/>
 
-# Schnick Schnack Schnuck Pepper
+This repo contains the code for our seminar project. The goal is detect some hand gestures via the internal camera of the [pepper robot](https://aldebaran.com/en/). And to play the rock paper scissors game against it.
 
-## Schitt 0
-- thema definieren
-- api pepper anschauen
-- ai vision modell finden (gesten)
-- python pepper bibliothek
+# Overview
+## Hardware
 
-## Schritt 1 (prototyp)
-- Kamera
-- Pi mit Coral TPU
-- Gestenerkennung der Hand
-- Schnick Schack Schnuck business logik
+To run this setup, you will need the following parts:
+- Pepper Robot
+- Raspberry Pi (We use the Pi5 with 8G Ram, which is Overkill):
+  - SD-Card
+  - Powersupply
+  - Google Coral Tpu USB
+  - RPi Cooler
 
-## Schritt 2
-- mit pepper zum laufen bekommen
-- compute immer noch auf pi & coral tpu
-- pepper kameras nutzen
-- pepper und pi via wifi verbinden
+And you need to ensure to connect both, the Pi and the Pepper to the same Network.
 
-## Todo
+## Software
 
-![image](assets/2.png)
+This setup constists of three parts:
 
-- [x] gesture recognition
-- [x] video stream
-- [x] webui
-- [o] other/custom model for rock, paper, scissors
-- [ ] game logic
+- **Game Server**
+
+  This is the main logic handling the compute and game logic
+
+- **Pepper API**
+
+  This script is running in the head of the pepper robot and provides the API for the camera and movements.
+
+- **Model Training**
+
+  This repo contains the training script and data to build the custom ai model
+
+# Setup
 
 ## Venv
+
+To develop you need to setup **python3.10** and create the venv.
 
 ```shell
 python3.10 -m venv .venv
@@ -49,14 +58,9 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-## Prerequisites
-- install python 3.10
-
-https://coral.ai/docs/edgetpu/compiler/
-
-https://coral.ai/docs/accelerator/get-started/#install-the-edge-tpu-runtime
-
 ## Install edge tpu repo
+
+Then you need to ensure you have the coral tpu dependencies installed.
 
 ```shell
 echo "deb https://packages.cloud.google.com/apt coral-edgetpu-stable main" | sudo tee /etc/apt/sources.list.d/coral-edgetpu.list
@@ -84,31 +88,6 @@ To setup the pi there is a small ansbile script. To run it you need to install a
   ansible-playbook -i '192.168.0.189,' -u david setup_pi.yml -Kk --diff
   ```
 
-## Docker context
-
-to use docker on the pi create a new docker context
-
-```shell
-docker context create pi \
-  --docker "host=ssh://david@192.168.0.47"
-```
-
-then to use it
-
-```shell
-# See all your contexts
-docker context ls
-
-# Switch to the Pi
-docker context use pi
-```
-
-to switch back
-
-```shell
-docker context use default
-```
-
 ## Manual Build
 
 to build the docker image locally run:
@@ -122,38 +101,6 @@ docker buildx build \
   -t seminar:latest \
   .
 ```
-
-copy over manually:
-
-```shell
-docker save seminar:latest | ssh david@192.168.0.47 "docker load"
-```
-
-# Pepepr port scan
-```
-↪ sudo nix run nixpkgs#nmap -- -sV -O -p- 192.168.3.68
-Starting Nmap 7.96 ( https://nmap.org ) at 2025-05-27 14:46 CEST
-Note: Host seems down. If it is really up, but blocking our ping probes, try -Pn
-Nmap done: 1 IP address (0 hosts up) scanned in 6.28 seconds
-
-
-↪ sudo nix run nixpkgs#nmap -- -sV -O -p- 192.168.3.69
-Starting Nmap 7.96 ( https://nmap.org ) at 2025-05-27 14:51 CEST
-Nmap scan report for 192.168.3.69
-Host is up (0.0099s latency).
-Not shown: 65532 closed tcp ports (reset)
-PORT     STATE SERVICE         VERSION
-22/tcp   open  ssh             OpenSSH 8.0 (protocol 2.0)
-9443/tcp open  tungsten-https?
-9503/tcp open  unknown
-MAC Address: 48:A9:D2:A8:D8:12 (Wistron Neweb)
-Device type: general purpose
-Running: Linux 3.X|4.X
-OS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4
-OS details: Linux 3.2 - 4.14
-Network Distance: 1 hop
-```
-
 
 ### PI Wifi Cli
 

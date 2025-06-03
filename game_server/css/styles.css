@@ -1,0 +1,106 @@
+/* Dark‑mode toggle icon */
+.dark-toggle {
+    cursor: pointer;
+    color: white;
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+    margin-right: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+    .stats-card {
+        flex: 1 1 100%;
+    }
+}
+
+/* Dark theme overrides */
+body.dark-theme {
+    background: #212121 !important;
+    color: #fff !important;
+}
+
+body.dark-theme .card {
+    background: #424242 !important;
+}
+
+body.dark-theme .card .card-content,
+body.dark-theme .card .card-title {
+    color: #fff !important;
+}
+
+body.dark-theme .navbar,
+body.dark-theme .nav-wrapper {
+    background-color: #333 !important;
+}
+
+/* Full‑width container */
+.container-fluid {
+    padding: 0 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Video always max size */
+.video-stream img {
+    width: 100%;
+    height: auto;
+    max-height: calc(100vh - 220px);
+    object-fit: cover;
+    margin-top: 15px;
+}
+
+/* Stats row */
+.stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    gap: 16px;
+    align-items: stretch;
+    /* stretch all cards to same height */
+}
+
+.stats-card {
+    flex: 1 1 280px;
+    display: flex;
+    flex-direction: column;
+}
+
+.stats-card .card {
+    height: 100%;
+    /* card fills its column */
+}
+
+.stats-card .card-content {
+    flex: 1;
+}
+
+/* Emphasize gesture & confidence */
+#gesture,
+#confidence {
+    font-size: 1.3rem;
+    font-weight: 500;
+    /* pick a poppy accent color: Amber lighten-2 */
+    color: #FFD54F;
+}
+
+@media (max-width: 800px) {
+    .stats-card {
+        flex: 1 1 100%;
+    }
+}
+
+/* Dark mode toggle icon */
+.dark-toggle {
+    cursor: pointer;
+    color: white;
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+    margin-right: 1rem;
+}
+
+/* Headers and keys bold */
+.card-title,
+.stats-card .card-content p strong {
+    font-weight: 700;
+}
