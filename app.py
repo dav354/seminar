@@ -5,7 +5,6 @@ import numpy as np
 import psutil
 import mediapipe as mp
 from flask import Flask, Response, render_template, jsonify
-from camera import setup_camera
 from draw import draw_landmarks
 from tflite_runtime.interpreter import Interpreter, load_delegate
 from collections import deque
@@ -14,6 +13,7 @@ from gesture_buffer import GestureCollector
 import threading
 
 # === Configuration ===
+PEPPER_IP="http://192.168.3.156:5000"
 label_map = ["none", "rock", "paper", "scissors"]
 gesture_collector = GestureCollector(duration=2.0)
 PREDICTION_HISTORY = deque(maxlen=5)
@@ -38,7 +38,7 @@ input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 
 # === Setup Camera and Hand Detection ===
-cap = setup_camera()
+cap = cv2.VideoCapture(f"{PEPPER_IP}/video_feed")
 mp_hands = mp.solutions.hands.Hands(static_image_mode=False, max_num_hands=1)
 
 # === Flask App ===
@@ -92,9 +92,12 @@ def generate_frames():
     while True:
         ret, frame = cap.read()
         if not ret:
-            log("[⚠️] Frame capture failed.")
+            log("[⚠️] Frame capture failed. Trying to reconnect...")
+            cap.release()
+            cap.open(f"{PEPPER_IP}/video_feed")
+            time.sleep(1)
             continue
-
+        
         frame = cv2.flip(frame, 1)
         gesture = "unknown"
         confidence = 0.0
