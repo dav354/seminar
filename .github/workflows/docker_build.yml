@@ -38,7 +38,7 @@ jobs:
           context: ./game_server/
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/dav354/seminar:latest
+          tags: ghcr.io/dav354/rps:latest
           cache-from: |
             type=gha
             type=gha,scope=pipcache
